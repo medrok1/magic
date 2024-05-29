@@ -8,10 +8,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function updateDeck() {
         deck.innerHTML = "";
-        deckCards.forEach(card => {
+        deckCards.forEach((card, index) => {
             const cardElement = document.createElement("div");
             cardElement.className = "card";
             cardElement.innerHTML = `<img src="${card.image_uris.small}" alt="${card.name}"><p>${card.name}</p>`;
+            cardElement.addEventListener("click", () => removeCardFromDeck(index));
             deck.appendChild(cardElement);
         });
         cardCount.textContent = deckCards.length;
@@ -25,6 +26,11 @@ document.addEventListener("DOMContentLoaded", () => {
         } else {
             alert("Deck cannot have more than 100 cards");
         }
+    }
+
+    function removeCardFromDeck(index) {
+        deckCards.splice(index, 1);
+        updateDeck();
     }
 
     function renderCards(cards) {

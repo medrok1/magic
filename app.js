@@ -3,15 +3,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const deck = document.getElementById("deck");
     const cardCount = document.getElementById("card-count");
     const searchBar = document.getElementById("search-bar");
-    const toggleModeButton = document.getElementById("toggle-mode");
 
     let deckCards = JSON.parse(localStorage.getItem("deck")) || [];
-    let removeMode = false;
-
-    toggleModeButton.addEventListener("click", () => {
-        removeMode = !removeMode;
-        toggleModeButton.textContent = removeMode ? "Exit Remove Mode" : "Toggle Remove Mode";
-    });
 
     function updateDeck() {
         deck.innerHTML = "";
@@ -19,9 +12,10 @@ document.addEventListener("DOMContentLoaded", () => {
             const cardElement = document.createElement("div");
             cardElement.className = "card";
             cardElement.innerHTML = `<img src="${card.image_uris.small}" alt="${card.name}"><p>${card.name}</p>`;
-            if (removeMode) {
-                cardElement.addEventListener("click", () => removeCardFromDeck(index));
-            }
+            cardElement.addEventListener("contextmenu", (e) => {
+                e.preventDefault();
+                removeCardFromDeck(index);
+            });
             deck.appendChild(cardElement);
         });
         cardCount.textContent = deckCards.length;

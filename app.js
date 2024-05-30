@@ -3,6 +3,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const deck = document.getElementById("deck");
     const cardCount = document.getElementById("card-count");
     const searchBar = document.getElementById("search-bar");
+    const saveDeckButton = document.getElementById("save-deck");
+    const uploadDeckInput = document.getElementById("upload-deck");
 
     let deckCards = JSON.parse(localStorage.getItem("deck")) || [];
 
@@ -47,6 +49,29 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
+    function saveDeck() {
+        const blob = new Blob([JSON.stringify(deckCards, null, 2)], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "deck.json";
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+    }
+
+    function uploadDeck(event) {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                deckCards = JSON.parse(e.target.result);
+                updateDeck();
+            };
+            reader.readAsText(file);
+        }
+    }
+
     searchBar.addEventListener("input", () => {
         const query = searchBar.value.toLowerCase();
         fetch(`https://api.scryfall.com/cards/search?q=${query}`)
@@ -58,6 +83,9 @@ document.addEventListener("DOMContentLoaded", () => {
             })
             .catch(error => console.error('Error fetching cards:', error));
     });
+
+    saveDeckButton.addEventListener("click", saveDeck);
+    uploadDeckInput.addEventListener("change", uploadDeck);
 
     renderCards([]);
     updateDeck();
